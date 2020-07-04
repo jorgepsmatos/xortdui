@@ -33,7 +33,7 @@ function App() {
     const [error, setError] = useState('');
     const [result, setResult] = useState('');
     const classes = useStyles();
-    const {register, handleSubmit, watch, errors} = useForm({
+    const {register, handleSubmit, errors} = useForm({
         mode: 'onSubmit',
         reValidateMode: 'onBlur',
         defaultValues: {},
