@@ -11,14 +11,14 @@ import {useForm} from "react-hook-form";
 
 const useStyles = makeStyles( (theme) => ({
     root: {
-        [theme.breakpoints.down('sm')]: {
-            minWidth: 300
+        [theme.breakpoints.down(600)]: {
+            minWidth: '100%'
         },
-        [theme.breakpoints.up('md')]: {
-            minWidth: 500
+        [theme.breakpoints.up(720)]: {
+            minWidth: '70%'
         },
-        [theme.breakpoints.up('lg')]: {
-            minWidth: 720
+        [theme.breakpoints.up(900)]: {
+            minWidth: 600
         }
     },
     bullet: {
