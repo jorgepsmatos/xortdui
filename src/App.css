@@ -1,10 +1,12 @@
+.card-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .inputError{
   color: red;
   display: flex;
   justify-content: left;
   padding: 0 0.5rem 1rem;
-}
-
-.result{
-  margin: 0 1rem;
 }

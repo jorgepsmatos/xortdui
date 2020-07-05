@@ -7,12 +7,19 @@ import {
 } from '@material-ui/core';
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import CardHeader from "@material-ui/core/CardHeader";
 import {useForm} from "react-hook-form";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles( (theme) => ({
     root: {
-        minWidth: 275,
+        [theme.breakpoints.down('sm')]: {
+            minWidth: 300
+        },
+        [theme.breakpoints.up('md')]: {
+            minWidth: 500
+        },
+        [theme.breakpoints.up('lg')]: {
+            minWidth: 720
+        }
     },
     bullet: {
         display: 'inline-block',
@@ -25,7 +32,14 @@ const useStyles = makeStyles({
     pos: {
         marginBottom: 12,
     },
-});
+    marginTopSpacer: {
+        marginTop: '0.75rem',
+        display: "grid"
+    },
+    result: {
+        margin: '1rem 0 0'
+    }
+}));
 
 function App() {
     const [url, setUrl] = useState('');
@@ -45,7 +59,7 @@ function App() {
     });
 
     const createShortUrl = async () => {
-        let endpoint = 'https://xortd.com/shorturl';
+        let endpoint = process.env.REACT_APP_XORTD_API_ENDPOINT + '/shorturl';
         let options = {
             method: 'POST',
             mode: 'cors',
@@ -62,8 +76,7 @@ function App() {
             let response = await fetch(endpoint, options);
             let responseOK = response && response.ok;
             if (responseOK) {
-                let data = await response.json();
-                setResult("https://xortd.com/" + data.slug);
+                setResult(response.headers.get('location'));
             } else {
                 setError("Failed to create short url");
             }
@@ -72,14 +85,28 @@ function App() {
         }
     }
 
+    const getFromClipboard = async () => {
+        const clipboard = await navigator.clipboard.readText();
+
+        if (clipboard && clipboard.match(/[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)?/gi)) {
+            setUrl(clipboard);
+        }
+    }
+
+    const copyToClipboard = async() => {
+        navigator.clipboard.writeText(result).then(() => {
+            alert('Copied ' + result +' to clipboard');
+        }, () => {
+            alert('Failed to copy ' + result + ' to clipboard');
+        });
+    }
+
     return (
         <div className="App">
-            <header className="App-header">
+            <div className="card-container">
+                <h1>XORTD</h1>
+                <h2>A url shortener</h2>
                 <Card className={classes.root}>
-                    <CardHeader className={classes.title}
-                                title="Xortd"
-                                subheader="A url shortner"
-                    />
                     <CardContent>
                         <form onSubmit={handleSubmit(createShortUrl)} autoComplete="off">
                             <div className="formInput">
@@ -92,11 +119,12 @@ function App() {
                                     variant="outlined"
                                     inputRef={register({
                                         required: true,
-                                        pattern: /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi
+                                        pattern: /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)?/gi
                                     })}
+                                    onFocus={getFromClipboard}
                                     fullWidth
                                 />
-                                <div className="inputError">{errors.url && "Url is empty or invalid"}</div>
+                                {errors.url && <div className="inputError">Url is empty or invalid</div>}
                             </div>
                             <div className="formInput">
                                 <TextField
@@ -111,19 +139,23 @@ function App() {
                                     })}
                                     fullWidth
                                 />
-                                <div className="inputError">{errors.slug && "Slug is invalid"}</div>
-                                <div className="inputError">{error}</div>
+                                {errors.slug && <div className="inputError">Slug is invalid</div>}
+                                {error && <div className="inputError">{error}</div>}
                             </div>
-                            <Button type="submit" color="primary" variant="contained">
-                                Create
-                            </Button>
-                            <div className="result">
-                                {result && <a href={result}>{result}</a>}
+                            <div className={classes.marginTopSpacer}>
+                                <Button type="submit" color="primary" variant="contained">
+                                    Create
+                                </Button>
+                                {
+                                    result && <div className={classes.result} onClick={copyToClipboard}>
+                                        {result} (click to copy)
+                                    </div>
+                                }
                             </div>
                         </form>
                     </CardContent>
                 </Card>
-            </header>
+            </div>
         </div>
     );
 }
