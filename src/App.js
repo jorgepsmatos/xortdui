@@ -9,7 +9,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {useForm} from "react-hook-form";
 
-const useStyles = makeStyles( (theme) => ({
+const useStyles = makeStyles((theme) => ({
     root: {
         [theme.breakpoints.down(600)]: {
             minWidth: '100%'
@@ -37,7 +37,11 @@ const useStyles = makeStyles( (theme) => ({
         display: "grid"
     },
     result: {
-        margin: '1rem 0 0'
+        margin: '1rem 0 0',
+        cursor: 'pointer',
+        textAlign: 'center',
+        fontSize: '1rem',
+        fontWeight: 'bold',
     }
 }));
 
@@ -93,9 +97,9 @@ function App() {
         }
     }
 
-    const copyToClipboard = async() => {
+    const copyToClipboard = async () => {
         navigator.clipboard.writeText(result).then(() => {
-            alert('Copied ' + result +' to clipboard');
+            alert('Copied ' + result + ' to clipboard');
         }, () => {
             alert('Failed to copy ' + result + ' to clipboard');
         });
