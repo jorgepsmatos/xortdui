@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.down(600)]: {
             minWidth: '100%'
         },
-        [theme.breakpoints.up(720)]: {
+        [theme.breakpoints.up(600)]: {
             minWidth: '70%'
         },
         [theme.breakpoints.up(900)]: {
@@ -35,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     marginTopSpacer: {
         marginTop: '0.75rem',
         display: "grid"
+    },
+    button: {
+        lineHeight: 2
     },
     result: {
         margin: '1rem 0 0',
@@ -88,7 +91,8 @@ function App() {
             setError("Failed to create short url");
         }
     }
-
+    
+    // eslint-disable-next-line
     const getFromClipboard = async () => {
         const clipboard = await navigator.clipboard.readText();
 
@@ -110,6 +114,7 @@ function App() {
             <div className="card-container">
                 <h1>XORTD</h1>
                 <h2>A url shortener</h2>
+                <h3>Create custom short urls for free</h3>
                 <Card className={classes.root}>
                     <CardContent>
                         <form onSubmit={handleSubmit(createShortUrl)} autoComplete="off">
@@ -125,7 +130,6 @@ function App() {
                                         required: true,
                                         pattern: /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)?/gi
                                     })}
-                                    onFocus={getFromClipboard}
                                     fullWidth
                                 />
                                 {errors.url && <div className="inputError">Url is empty or invalid</div>}
@@ -133,7 +137,7 @@ function App() {
                             <div className="formInput">
                                 <TextField
                                     name="slug"
-                                    label="Custom slug (optional)"
+                                    label="Slug (optional)"
                                     value={slug}
                                     onChange={e => setSlug(e.target.value)}
                                     margin="normal"
@@ -147,7 +151,7 @@ function App() {
                                 {error && <div className="inputError">{error}</div>}
                             </div>
                             <div className={classes.marginTopSpacer}>
-                                <Button type="submit" color="primary" variant="contained">
+                                <Button type="submit" color="primary" variant="contained" className={classes.button}>
                                     Create
                                 </Button>
                                 {
