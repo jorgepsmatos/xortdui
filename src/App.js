@@ -3,8 +3,10 @@ import './App.css';
 import {makeStyles} from '@material-ui/core/styles';
 import {
     Button,
-    TextField
+    TextField,
+    Snackbar
 } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import {useForm} from "react-hook-form";
@@ -48,11 +50,16 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function App() {
     const [url, setUrl] = useState('');
     const [slug, setSlug] = useState('');
     const [error, setError] = useState('');
     const [result, setResult] = useState('');
+    const [open, setOpen] = useState(false);
     const classes = useStyles();
     const {register, handleSubmit, errors} = useForm({
         mode: 'onSubmit',
@@ -103,11 +110,24 @@ function App() {
 
     const copyToClipboard = async () => {
         navigator.clipboard.writeText(result).then(() => {
-            alert('Copied ' + result + ' to clipboard');
+            // alert('Copied ' + result + ' to clipboard');
+            openSnackbar();
         }, () => {
             alert('Failed to copy ' + result + ' to clipboard');
         });
     }
+
+    const openSnackbar = () => {
+        setOpen(true);
+    };
+
+    const closeSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
 
     return (
         <div className="App">
@@ -115,6 +135,11 @@ function App() {
                 <h1>XORTD</h1>
                 <h2>A url shortener</h2>
                 <h3>Create custom short urls for free</h3>
+                <Snackbar open={open} autoHideDuration={6000} onClose={closeSnackbar} anchorOrigin={{vertical: 'top', horizontal: 'center'}}>
+                    <Alert onClose={closeSnackbar} severity="success">
+                        Copied {result} to clipboard!
+                    </Alert>
+                </Snackbar>
                 <Card className={classes.root}>
                     <CardContent>
                         <form onSubmit={handleSubmit(createShortUrl)} autoComplete="off">
